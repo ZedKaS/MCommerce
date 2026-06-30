@@ -24,7 +24,6 @@ Le projet est entierement dockerise afin de pouvoir lancer toute la stack avec u
 - [Dockerisation](#dockerisation)
 - [Lancement du projet](#lancement-du-projet)
 - [Endpoints utiles](#endpoints-utiles)
-- [Commandes Git pour publier le projet](#commandes-git-pour-publier-le-projet)
 
 ## Architecture generale
 
@@ -518,33 +517,4 @@ Exemple de configuration exposee par le Config Server :
 
 ```text
 http://localhost:8888/product-service/default
-```
-
-## Commandes Git pour publier le projet
-
-Le projet est deja initialise localement avec Git.
-
-Pour lier le projet a un nouveau repository GitHub vide :
-
-```powershell
-git remote add origin https://github.com/TON_USER/NOM_DU_REPO.git
-git branch -M main
-git push -u origin main
-```
-
-Avant de pousser, verifier l'etat du depot :
-
-```powershell
-git status
-```
-
-Les dossiers lourds et generes sont exclus du versioning :
-
-```text
-target/
-node_modules/
-dist/
-.angular/
-.env
-uploads/*
 ```
