@@ -1,0 +1,104 @@
+<div class="main-content">
+
+  <h1 class="page-title">Gestion des Utilisateurs</h1>
+    <!-- 🔍 SEARCH BAR -->
+<div class="filter-bar">
+  <input
+    type="text"
+    class="search-input"
+    placeholder="Rechercher un utilisateur..."
+    [(ngModel)]="searchTerm"
+    (input)="onSearch()"
+  >
+</div>
+
+  <button class="btn" (click)="openAddModal()">
+    + Ajouter user
+  </button>
+
+  <!-- MESSAGE -->
+  <p *ngIf="loading">Chargement...</p>
+  <p *ngIf="error" style="color:red">{{ error }}</p>
+
+  <!-- TABLE USERS -->
+  <table class="table" *ngIf="!loading && users.length">
+
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Role</th>
+      <th>Enabled</th>
+      <th>Créé</th>
+      <th>Actions</th>
+    </tr>
+
+    <tr *ngFor="let user of users">
+      <td>{{ user.id }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.role }}</td>
+      <td>{{ user.enabled }}</td>
+      <td>{{ user.createdDate | date:'short' }}</td>
+      <td>
+        <button class="btn" (click)="openEditModal(user)">Modifier</button>
+        <button class="btn btn-danger" (click)="deleteUser(user.id)">Supprimer</button>
+      </td>
+    </tr>
+
+  </table>
+
+  <p *ngIf="!loading && users.length === 0">
+    Aucun utilisateur trouvé.
+  </p>
+
+</div>
+
+<!-- ===== ADD USER MODAL ===== -->
+<div class="modal" *ngIf="showAddModal">
+  <div class="modal-content">
+    <h3>Ajouter User</h3>
+
+    <input
+      placeholder="Username"
+      [(ngModel)]="newUser.username"
+    >
+
+    <input
+      type="password"
+      placeholder="Password"
+      [(ngModel)]="newUser.password"
+    >
+
+    <select [(ngModel)]="newUser.role">
+      <option value="ADMIN">ADMIN</option>
+      <option value="USER">USER</option>
+    </select>
+
+    <button class="btn" (click)="createUser()">Créer</button>
+    <button class="modal-close" (click)="closeAddModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- ===== EDIT USER MODAL ===== -->
+<div class="modal" *ngIf="showEditModal">
+  <div class="modal-content">
+    <h3>Modifier User</h3>
+
+    <input
+      placeholder="Username"
+      [(ngModel)]="editUser.username"
+    >
+
+    <select [(ngModel)]="editUser.role">
+      <option value="ADMIN">ADMIN</option>
+      <option value="USER">USER</option>
+    </select>
+
+    <select [(ngModel)]="editUser.enabled">
+      <option [ngValue]="true">true</option>
+      <option [ngValue]="false">false</option>
+    </select>
+
+    <button class="btn" (click)="updateUser()">Modifier</button>
+    <button class="modal-close" (click)="closeEditModal()">Fermer</button>
+  </div>
+</div>

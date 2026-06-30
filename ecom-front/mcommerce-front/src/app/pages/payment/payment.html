@@ -1,0 +1,126 @@
+<app-navbar></app-navbar>
+
+<div class="checkout-page">
+
+  <h1 class="page-title">Paiement</h1>
+
+  <!-- CHOIX MODE -->
+  <div class="shop-filter-bar">
+    <select [(ngModel)]="paymentMethod">
+      <option value="CARD">Carte bancaire</option>
+      <option value="PAYPAL">PayPal</option>
+      <option value="CASH">Paiement à la livraison</option>
+    </select>
+  </div>
+
+  <div class="checkout-layout">
+
+    <!-- FORMULAIRE -->
+    <div class="checkout-form">
+
+      <h2>Informations de paiement</h2>
+      <!-- 💳 VISUAL CARD -->
+<div class="credit-card" *ngIf="paymentMethod === 'CARD'">
+  <div class="card-chip"></div>
+
+  <div class="card-number">
+    {{ cardNumber || '•••• •••• •••• ••••' }}
+  </div>
+
+  <div class="card-footer">
+    <div>
+      <span>Nom</span>
+      <strong>{{ cardName || 'NOM PRENOM' }}</strong>
+    </div>
+
+    <div>
+      <span>Exp</span>
+      <strong>{{ cardExpiry || 'MM/AA' }}</strong>
+    </div>
+  </div>
+</div>
+
+      <!-- CARD -->
+      <form *ngIf="paymentMethod === 'CARD'">
+
+  <input
+    placeholder="Nom sur la carte"
+    [(ngModel)]="cardName"
+    name="cardName"
+  >
+
+  <input
+    placeholder="Numéro de carte"
+    [(ngModel)]="cardNumber"
+    name="cardNumber"
+    maxlength="19"
+  >
+
+  <div class="form-row">
+    <input
+      placeholder="MM / AA"
+      [(ngModel)]="cardExpiry"
+      name="cardExpiry"
+      maxlength="5"
+    >
+
+    <input
+      placeholder="CVV"
+      [(ngModel)]="cardCvv"
+      name="cardCvv"
+      maxlength="3"
+      type="password"
+    >
+  </div>
+
+</form>
+
+
+      <!-- PAYPAL -->
+      <form *ngIf="paymentMethod === 'PAYPAL'">
+        <input placeholder="Email PayPal">
+        <input type="password" placeholder="Mot de passe">
+      </form>
+
+      <!-- CASH -->
+      <p *ngIf="paymentMethod === 'CASH'">
+        Vous paierez directement à la livraison.
+      </p>
+
+      <button
+        class="pay-btn"
+        (click)="pay()"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Traitement...' : 'Payer maintenant' }}
+      </button>
+
+    </div>
+
+    <!-- RESUME -->
+<div class="checkout-summary">
+
+  <h2>Résumé de la commande</h2>
+
+  <div
+    class="summary-item"
+    *ngFor="let item of cartItems"
+  >
+    <span>
+      {{ item.productName }} × {{ item.quantity }}
+    </span>
+    <span>
+      {{ item.totalPrice }} DH
+    </span>
+  </div>
+
+  <div class="summary-total">
+    <span>Total</span>
+    <span>{{ total }} DH</span>
+  </div>
+
+</div>
+
+
+  </div>
+</div>

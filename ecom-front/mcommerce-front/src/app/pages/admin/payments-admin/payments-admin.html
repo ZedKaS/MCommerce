@@ -1,0 +1,92 @@
+<div class="admin-layout">
+  <div class="main-content">
+
+    <h1 class="page-title">Historique des Paiements</h1>
+
+    <!-- 🔍 FILTER BAR -->
+    <div class="filter-bar">
+      <input
+        class="search-input"
+        placeholder="Transaction / User ID"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+      >
+
+      <select
+        class="select-filter"
+        [(ngModel)]="statusFilter"
+        (change)="applyFilters()"
+      >
+        <option value="">Tous les statuts</option>
+        <option value="SUCCESS">SUCCESS</option>
+        <option value="FAILED">FAILED</option>
+        <option value="PENDING">PENDING</option>
+      </select>
+
+      <select
+        class="select-filter"
+        [(ngModel)]="methodFilter"
+        (change)="applyFilters()"
+      >
+        <option value="">Toutes méthodes</option>
+        <option value="CARD">CARD</option>
+        <option value="PAYPAL">PAYPAL</option>
+      </select>
+
+      <button class="btn" (click)="resetFilters()">Reset</button>
+    </div>
+
+    <!-- MESSAGE -->
+    <p *ngIf="loading">Chargement...</p>
+    <p *ngIf="error" style="color:red">{{ error }}</p>
+
+    <!-- TABLE -->
+    <table class="table" *ngIf="!loading && filteredPayments.length">
+
+      <tr>
+        <th>Transaction</th>
+        <th>User ID</th>
+        <th>Montant</th>
+        <th>Status</th>
+        <th>Méthode</th>
+        <th>Date</th>
+      </tr>
+
+      <tr *ngFor="let p of filteredPayments">
+        <td>{{ p.transactionId }}</td>
+        <td>{{ p.userId }}</td>
+        <td>{{ p.amount }} DH</td>
+        <td>{{ p.status }}</td>
+        <td>{{ p.paymentMethod }}</td>
+        <td>{{ p.createdDate | date:'short' }}</td>
+      </tr>
+
+    </table>
+
+    <p *ngIf="!loading && filteredPayments.length === 0">
+      Aucun paiement trouvé.
+    </p>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+      <button
+        class="btn"
+        [disabled]="page === 0"
+        (click)="changePage(page - 1)"
+      >
+        ← Précédent
+      </button>
+
+      <span>Page {{ page + 1 }} / {{ totalPages }}</span>
+
+      <button
+        class="btn"
+        [disabled]="page + 1 >= totalPages"
+        (click)="changePage(page + 1)"
+      >
+        Suivant →
+      </button>
+    </div>
+
+  </div>
+</div>

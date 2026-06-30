@@ -1,0 +1,93 @@
+<app-navbar></app-navbar>
+
+<!-- PRODUCT DETAIL -->
+<div class="product-detail" *ngIf="product">
+
+  <!-- IMAGE -->
+  <img
+    [src]="getImageUrl(product.imageUrl)"
+    alt="{{ product.name }}"
+  >
+
+  <!-- INFO -->
+  <div class="product-detail-info">
+    <h2>{{ product.name }}</h2>
+
+    <p class="description">
+      {{ product.description }}
+    </p>
+
+    <p class="price">
+      {{ product.price }} DH
+    </p>
+
+    <button class="add-cart" (click)="addToCart()">
+      Ajouter au panier
+    </button>
+  </div>
+
+</div>
+
+<!-- LOADING -->
+<p *ngIf="loading" style="text-align:center; margin:40px">
+  Chargement du produit...
+</p>
+
+<!-- SUGGESTIONS -->
+<div class="suggestions" *ngIf="suggestions.length">
+
+  <h3>Produits similaires</h3>
+
+  <div class="products">
+
+    <div
+      class="product-card"
+      *ngFor="let p of suggestions"
+    >
+      <img
+        [src]="getImageUrl(p.imageUrl)"
+        alt="{{ p.name }}"
+      >
+
+      <div class="product-info">
+        <h3>{{ p.name }}</h3>
+        <p class="price">{{ p.price }} DH</p>
+
+        <a
+            class="details-btn"
+            [routerLink]="['/products', p.id]"
+          >
+            Voir détails
+          </a>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🔁 PAGINATION SUGGESTIONS -->
+  <div class="pagination" *ngIf="suggestionsTotalPages > 1">
+
+    <button
+      class="page prev"
+      [disabled]="suggestionsPage === 0"
+      (click)="changeSuggestionsPage(suggestionsPage - 1)"
+    >
+      ‹
+    </button>
+
+    <span class="page active">
+      {{ suggestionsPage + 1 }} / {{ suggestionsTotalPages }}
+    </span>
+
+    <button
+      class="page next"
+      [disabled]="suggestionsPage + 1 >= suggestionsTotalPages"
+      (click)="changeSuggestionsPage(suggestionsPage + 1)"
+    >
+      ›
+    </button>
+
+  </div>
+
+</div>

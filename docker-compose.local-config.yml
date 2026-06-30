@@ -1,0 +1,7 @@
+services:
+  config-server:
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+      CONFIG_NATIVE_SEARCH_LOCATIONS: file:/config-repo
+    volumes:
+      - ./config-repo:/config-repo:ro

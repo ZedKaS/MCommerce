@@ -1,0 +1,85 @@
+<app-navbar></app-navbar>
+
+<!-- HERO -->
+<div class="hero">
+  <img src="/hero.jpg" alt="Shop Hero">
+  <h1>Guitar Store!</h1>
+</div>
+
+<!-- SHOP -->
+<div class="section">
+
+  <!-- FILTER BAR -->
+  <div class="shop-filter-bar">
+    <input
+      type="text"
+      class="shop-search"
+      placeholder="Rechercher un produit..."
+      [(ngModel)]="keyword"
+      (input)="onSearch()"
+    >
+
+    <select
+      class="shop-sort"
+      [(ngModel)]="priceOrder"
+      (change)="onSortChange()"
+    >
+      <option value="asc">Prix croissant</option>
+      <option value="desc">Prix décroissant</option>
+    </select>
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <div class="products">
+
+    <div
+      class="product-card"
+      *ngFor="let product of products"
+    >
+      <img
+        [src]="getImageUrl(product.imageUrl)"
+        alt="{{ product.name }}"
+      >
+
+      <div class="product-info">
+        <h3>{{ product.name }}</h3>
+        <p class="price">{{ product.price }} DH</p>
+
+        <a
+  class="details-btn"
+  [routerLink]="['/products', product.id]"
+>
+  Voir détails
+</a>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="pagination" *ngIf="totalPages >= 1">
+    <button
+  class="page prev"
+  [disabled]="page === 0"
+  (click)="changePage(page - 1)"
+>
+  ‹
+</button>
+
+<span class="page active">
+  {{ page + 1 }} / {{ totalPages }}
+</span>
+
+<button
+  class="page next"
+  [disabled]="page + 1 >= totalPages"
+  (click)="changePage(page + 1)"
+>
+  ›
+</button>
+
+
+  </div>
+
+</div>

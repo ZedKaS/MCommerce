@@ -1,0 +1,87 @@
+.main-content {
+  padding: 40px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.btn {
+  padding: 10px 14px;
+  border: 2px solid #000;
+  background: #547792;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 11px;
+  box-shadow: 3px 3px 0 #000;
+}
+
+.btn-danger {
+  background: #b02a2a;
+}
+
+.filter-bar {
+  margin: 24px 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0 #000;
+}
+
+.table th,
+.table td {
+  padding: 14px;
+  border: 2px solid #000;
+}
+
+.table th {
+  background: #94B4C1;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 32px;
+  border: 3px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  width: 420px;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 2px solid #000;
+}
+
+.modal-close {
+  margin-left: 10px;
+  font-weight: 800;
+}

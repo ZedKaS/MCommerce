@@ -1,0 +1,248 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mcommerce-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      POSTGRES_DB: postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  config-server:
+    build: ./config.server
+    container_name: mcommerce-config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+      CONFIG_REPO_URI: ${CONFIG_REPO_URI:-https://github.com/ZedKaS/config-repo.git}
+      CONFIG_REPO_BRANCH: ${CONFIG_REPO_BRANCH:-main}
+      CONFIG_GIT_BASEDIR: /tmp/config-repo-cache
+      CONFIG_NATIVE_SEARCH_LOCATIONS: file:/config-repo
+    ports:
+      - "${CONFIG_SERVER_PORT:-8888}:8888"
+    volumes:
+      - config-git-cache:/tmp/config-repo-cache
+      - ./config-repo:/config-repo:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8888/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  eureka-server:
+    build: ./eureka.server
+    container_name: mcommerce-eureka-server
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      SPRING_CLOUD_CONFIG_ALLOW_OVERRIDE: "true"
+      SPRING_CLOUD_CONFIG_OVERRIDE_SYSTEM_PROPERTIES: "false"
+    command:
+      - --spring.cloud.config.uri=http://config-server:8888
+    ports:
+      - "${EUREKA_PORT:-8761}:8761"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  auth-service:
+    build: ./auth-service
+    container_name: mcommerce-auth-service
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_DEFAULT_ZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      SPRING_CLOUD_CONFIG_ALLOW_OVERRIDE: "true"
+      SPRING_CLOUD_CONFIG_OVERRIDE_SYSTEM_PROPERTIES: "false"
+    command:
+      - --spring.cloud.config.uri=http://config-server:8888
+      - --eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - --spring.datasource.url=jdbc:postgresql://postgres:5432/auth_db
+      - --spring.datasource.username=${POSTGRES_USER:-postgres}
+      - --spring.datasource.password=${POSTGRES_PASSWORD:-root}
+    ports:
+      - "${AUTH_SERVICE_PORT:-8084}:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8084/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+
+  product-service:
+    build: ./product-service
+    container_name: mcommerce-product-service
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_DEFAULT_ZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/product_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      FILE_UPLOAD_DIR: /data/uploads
+      SPRING_CLOUD_CONFIG_ALLOW_OVERRIDE: "true"
+      SPRING_CLOUD_CONFIG_OVERRIDE_SYSTEM_PROPERTIES: "false"
+    command:
+      - --spring.cloud.config.uri=http://config-server:8888
+      - --eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - --spring.datasource.url=jdbc:postgresql://postgres:5432/product_db
+      - --spring.datasource.username=${POSTGRES_USER:-postgres}
+      - --spring.datasource.password=${POSTGRES_PASSWORD:-root}
+      - --file.upload-dir=/data/uploads
+    ports:
+      - "${PRODUCT_SERVICE_PORT:-8081}:8081"
+    volumes:
+      - product-uploads:/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8081/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+
+  cart-service:
+    build: ./cart-service
+    container_name: mcommerce-cart-service
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_DEFAULT_ZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cart_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      SPRING_CLOUD_CONFIG_ALLOW_OVERRIDE: "true"
+      SPRING_CLOUD_CONFIG_OVERRIDE_SYSTEM_PROPERTIES: "false"
+    command:
+      - --spring.cloud.config.uri=http://config-server:8888
+      - --eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - --spring.datasource.url=jdbc:postgresql://postgres:5432/cart_db
+      - --spring.datasource.username=${POSTGRES_USER:-postgres}
+      - --spring.datasource.password=${POSTGRES_PASSWORD:-root}
+    ports:
+      - "${CART_SERVICE_PORT:-8082}:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8082/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+
+  payment-service:
+    build: ./payment-service
+    container_name: mcommerce-payment-service
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_DEFAULT_ZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payment_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      SPRING_CLOUD_CONFIG_ALLOW_OVERRIDE: "true"
+      SPRING_CLOUD_CONFIG_OVERRIDE_SYSTEM_PROPERTIES: "false"
+    command:
+      - --spring.cloud.config.uri=http://config-server:8888
+      - --eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - --spring.datasource.url=jdbc:postgresql://postgres:5432/payment_db
+      - --spring.datasource.username=${POSTGRES_USER:-postgres}
+      - --spring.datasource.password=${POSTGRES_PASSWORD:-root}
+    ports:
+      - "${PAYMENT_SERVICE_PORT:-8083}:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      cart-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8083/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+
+  api-gateway:
+    build: ./api.gateway
+    container_name: mcommerce-api-gateway
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_DEFAULT_ZONE: http://eureka-server:8761/eureka/
+      APP_CORS_ALLOWED_ORIGINS: ${APP_CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+      SPRING_CLOUD_CONFIG_ALLOW_OVERRIDE: "true"
+      SPRING_CLOUD_CONFIG_OVERRIDE_SYSTEM_PROPERTIES: "false"
+    command:
+      - --spring.cloud.config.uri=http://config-server:8888
+      - --eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - --app.cors.allowed-origins=${APP_CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+    ports:
+      - "${API_GATEWAY_PORT:-9000}:9000"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+      cart-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+
+  frontend:
+    build: ./ecom-front/mcommerce-front
+    container_name: mcommerce-frontend
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  product-uploads:
+  config-git-cache:

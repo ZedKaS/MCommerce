@@ -1,0 +1,68 @@
+<app-navbar></app-navbar>
+
+<div class="profile-page">
+
+  <h1 class="page-title">Mon Profil</h1>
+
+  <!-- USER INFO -->
+  <div class="profile-card">
+    <h2>Informations personnelles</h2>
+
+    <div class="profile-row">
+      <span>Username</span>
+      <span>{{ username }}</span>
+    </div>
+
+    <div class="profile-row">
+      <span>Rôle</span>
+      <span>{{ role }}</span>
+    </div>
+
+    <div class="profile-row">
+      <span>Statut</span>
+      <span class="status active">{{ status }}</span>
+    </div>
+  </div>
+
+  <!-- PAYMENT HISTORY -->
+  <div class="payment-history">
+
+    <h2>Historique des paiements</h2>
+
+    <p *ngIf="loading">Chargement...</p>
+
+    <p *ngIf="!loading && payments.length === 0">
+      Aucun paiement trouvé
+    </p>
+
+    <div
+      class="payment-item"
+      *ngFor="let payment of payments"
+    >
+      <div>
+        <strong>Transaction #{{ payment.transactionId }}</strong>
+        <p>{{ payment.paymentMethod }}</p>
+      </div>
+
+      <div>
+        <p class="amount">{{ payment.amount }} DH</p>
+
+        <p
+          class="status"
+          [ngClass]="{
+            'success': payment.status === 'SUCCESS',
+            'failed': payment.status === 'FAILED'
+          }"
+        >
+          {{ payment.status === 'SUCCESS' ? 'PAYÉ' : 'ÉCHOUÉ' }}
+        </p>
+
+        <p class="date">
+          {{ payment.createdDate | date:'dd/MM/yyyy' }}
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+:root {
+  --cream: #E3E3E3;
+  --light-blue: #94B4C1;
+  --blue: #547792;
+  --dark-blue: #213448;
+  --black: #000;
+}

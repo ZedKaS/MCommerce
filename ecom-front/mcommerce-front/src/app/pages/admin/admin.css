@@ -1,0 +1,11 @@
+.admin-layout {
+  display: flex;
+  align-items: stretch;   /* 🔥 TRÈS IMPORTANT */
+  min-height: 100vh;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 40px;
+  background: var(--cream);
+}

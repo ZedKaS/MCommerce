@@ -1,0 +1,67 @@
+<app-navbar></app-navbar>
+
+<!-- CART PAGE -->
+<div class="cart-page">
+
+  <h1 class="page-title">Mon Panier</h1>
+
+  <!-- CART ITEMS -->
+  <div class="cart-items">
+
+    <!-- ITEM -->
+    <div class="cart-item" *ngFor="let item of cartItems">
+
+  <img
+    [src]="getImageUrl(item.productImageUrl)"
+    alt="{{ item.productName }}"
+  >
+
+  <div class="cart-item-info">
+    <h3>{{ item.productName }}</h3>
+    <p class="price">{{ item.price }} DH</p>
+
+    <div class="cart-actions">
+      <label>Quantité</label>
+      <input
+        type="number"
+        [(ngModel)]="item.quantity"
+        min="1"
+        (change)="updateQuantity(item)"
+      >
+
+      <button
+        class="remove-btn"
+        (click)="removeItem(item.productId)"
+      >
+        Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
+
+    <!-- PANIER VIDE -->
+    <p *ngIf="cartItems.length === 0">
+      Votre panier est vide.
+    </p>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="cart-summary" *ngIf="cartItems.length">
+
+    <p>
+      Total :
+      <strong>{{ total }} DH</strong>
+    </p>
+
+    <button
+      class="checkout-btn"
+      (click)="checkout()"
+    >
+      Checkout
+    </button>
+
+  </div>
+
+</div>

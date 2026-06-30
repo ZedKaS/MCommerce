@@ -1,0 +1,173 @@
+.main-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 10px 14px;
+  border: 2px solid #000;
+  background: #547792;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 11px;
+  box-shadow: 3px 3px 0 #000;
+}
+
+.btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.btn-danger {
+  background: #b02a2a;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px;
+  border: 3px solid #000;
+  font-weight: 700;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.select-filter {
+  padding: 12px;
+  border: 3px solid #000;
+  font-weight: 800;
+  box-shadow: 4px 4px 0 #000;
+}
+
+/* ===== CARDS ===== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: white;
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0 #000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-image {
+  height: 160px;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  overflow: hidden;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.price {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.status.active {
+  color: green;
+}
+
+.status.inactive {
+  color: red;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 32px;
+  border: 3px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  width: 420px;
+}
+
+.modal-content h3 {
+  margin-bottom: 16px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 2px solid #000;
+}
+
+.modal-close {
+  margin-left: 10px;
+  background: transparent;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.pagination .btn {
+  padding: 10px 16px;
+  font-size: 11px;
+}
+
+.pagination .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 3px 3px 0 #000;
+}
+
+.page-info {
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 12px;
+}

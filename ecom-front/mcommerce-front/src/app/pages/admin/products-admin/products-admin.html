@@ -1,0 +1,169 @@
+<div class="main-content">
+
+  <h1 class="page-title">Gestion des Produits</h1>
+
+  <button class="btn" (click)="openAddModal()">
+    + Ajouter produit
+  </button>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <input
+  type="text"
+  class="search-input"
+  placeholder="Rechercher un produit..."
+  [(ngModel)]="keyword"
+  (input)="onSearch()"
+/>
+
+
+    <select
+  class="select-filter"
+  [(ngModel)]="priceOrder"
+  (change)="onSortChange()"
+>
+  <option value="asc">Prix croissant</option>
+  <option value="desc">Prix décroissant</option>
+</select>
+
+  </div>
+
+  <!-- PRODUCT CARDS -->
+  <div class="cards">
+
+    <div class="card" *ngFor="let product of products">
+
+      <div class="product-image">
+        <img
+          [src]="getImageUrl(product.imageUrl)"
+          alt="{{ product.name }}"
+        >
+      </div>
+
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.description }}</p>
+
+      <p class="price">{{ product.price }} DH</p>
+
+      <p
+        class="status"
+        [class.active]="product.active"
+        [class.inactive]="!product.active"
+      >
+        {{ product.active ? 'Actif' : 'Inactif' }}
+      </p>
+
+      <p>
+  <strong>Créé :</strong>
+  {{ product.createdDate | date:'dd/MM/yyyy HH:mm' }}
+</p>
+
+
+      <div class="card-actions">
+        <button class="btn" (click)="openEditModal(product)">
+          Modifier
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="deleteProduct(product.id)"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= ADD PRODUCT MODAL ================= -->
+<div class="modal" *ngIf="showAddModal">
+  <div class="modal-content">
+    <h3>Ajouter Produit</h3>
+
+    <input
+      type="text"
+      placeholder="Nom du produit"
+      [(ngModel)]="newProduct.name"
+    >
+
+    <textarea
+      placeholder="Description"
+      [(ngModel)]="newProduct.description"
+    ></textarea>
+
+    <input
+      type="number"
+      placeholder="Prix"
+      [(ngModel)]="newProduct.price"
+    >
+
+    <label><strong>Image produit</strong></label>
+    <input type="file" (change)="onFileSelected($event)">
+
+    <select [(ngModel)]="newProduct.active">
+      <option [ngValue]="true">Actif</option>
+      <option [ngValue]="false">Inactif</option>
+    </select>
+
+    <button class="btn" (click)="createProduct()">Créer</button>
+    <button class="modal-close" (click)="closeAddModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- ================= EDIT PRODUCT MODAL ================= -->
+<div class="modal" *ngIf="showEditModal">
+  <div class="modal-content">
+    <h3>Modifier Produit</h3>
+
+    <input
+      type="text"
+      [(ngModel)]="editProduct.name"
+    >
+
+    <textarea
+      [(ngModel)]="editProduct.description"
+    ></textarea>
+
+    <input
+      type="number"
+      [(ngModel)]="editProduct.price"
+    >
+
+    <label><strong>Changer l’image</strong></label>
+    <input type="file" (change)="onEditFileSelected($event)">
+
+    <select [(ngModel)]="editProduct.active">
+      <option [ngValue]="true">Actif</option>
+      <option [ngValue]="false">Inactif</option>
+    </select>
+
+    <button class="btn" (click)="updateProduct()">Modifier</button>
+    <button class="modal-close" (click)="closeEditModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- ===== PAGINATION ===== -->
+<div class="pagination">
+
+  <button
+    class="btn"
+    [disabled]="page === 0"
+    (click)="changePage(page - 1)"
+  >
+    ← Précédent
+  </button>
+
+  <span class="page-info">
+    Page {{ page + 1 }} / {{ totalPages }}
+
+  </span>
+
+  <button
+    class="btn"
+    [disabled]="page + 1 >= totalPages"
+    (click)="changePage(page + 1)"
+  >
+    Suivant →
+  </button>
+
+</div>
