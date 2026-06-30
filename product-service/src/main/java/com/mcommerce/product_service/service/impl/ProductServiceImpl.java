@@ -24,7 +24,7 @@ import java.nio.file.StandardCopyOption;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
-    @Value("${file.upload-dir}")
+    @Value("${file.upload-dir:uploads}")
     private String uploadDir;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
